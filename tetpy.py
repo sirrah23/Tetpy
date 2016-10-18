@@ -1,24 +1,74 @@
-import pygame
+class TetrisGame(object):
 
-WIDTH, HEIGHT = 40, 40
-DELAY = 500
+        active_piece = None
+        spawn_zone = None  # Will use this later
+
+        # Initialize the tetris game with a WIDTH x HEIGHT tetris board
+        def __init__(self, WIDTH, HEIGHT):
+                self.WIDTH = WIDTH
+                self.HEIGHT = HEIGHT
+                self.board = [[0 for x in range(WIDTH)] for y in range(HEIGHT)]
+
+        def new_active_piece(self):
+                self.active_piece = LinePiece()
+
+        def get_direction(self):
+                return (1, 0)
+
+        def draw(self):
+                self.board = [[0 for x in range(self.WIDTH)] for y in range(self.HEIGHT)]  # Clear board
+                for coordinate in self.active_piece.coordinates:
+                        self.board[coordinate[0]][coordinate[1]] = 1  # Draw piece onto board
+
+        def __str__(self):
+                result = ""
+                for row in self.board:
+                        for col in row:
+                                result += str(col)
+                                result += ' '
+                        result += '\n'
+                return result
+
+        def __repr__(self):
+                return self.__str__()
+
+        def run_iteration(self):
+                if self.active_piece is None:
+                        self.new_active_piece()
+                else:
+                        direction = self.get_direction()
+                        self.active_piece.update(direction)
+                self.draw()
 
 
-pygame.init()
-screen = pygame.display.set_mode((560, 800))
-done = False
+class Tetromino(object):
 
-y = 30
+        def update(self, direction):
+                new_coordinates = []
+                for coordinate in self.coordinates:
+                        new_coordinates.append(tuple(x + y for x, y in zip(coordinate, direction)))
+                self.coordinates = new_coordinates
 
-while not done:
-        for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                        done = True
-        screen.fill((0,0,0)) # Black
-        y += HEIGHT
-        pygame.draw.rect(screen, (0, 128, 255), pygame.Rect(80 , y, WIDTH, HEIGHT))  # Rect arguments - x, y, width, height
-        pygame.draw.rect(screen, (0, 128, 255), pygame.Rect(120, y, WIDTH, HEIGHT))
-        pygame.draw.rect(screen, (0, 128, 255), pygame.Rect(160, y, WIDTH, HEIGHT))
-        pygame.draw.rect(screen, (0, 128, 255), pygame.Rect(200, y, WIDTH, HEIGHT))
-        pygame.display.flip()
-        pygame.time.delay(DELAY)
+
+class LinePiece(Tetromino):
+        def __init__(self):
+                self.coordinates = [(0, 4), (0, 5), (0, 6), (0, 7)]
+                self.origin = (0, 6)
+
+
+def main():
+        TG = TetrisGame(14, 16)
+        print TG
+        TG.run_iteration()
+        print TG
+        TG.run_iteration()
+        print TG
+        TG.run_iteration()
+        print TG
+        TG.run_iteration()
+        print TG
+        TG.run_iteration()
+        print TG
+
+if __name__ == '__main__':
+        main()
