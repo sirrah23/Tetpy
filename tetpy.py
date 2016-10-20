@@ -48,6 +48,17 @@ class Tetromino(object):
                 for coordinate in self.coordinates:
                         new_coordinates.append(tuple(x + y for x, y in zip(coordinate, direction)))
                 self.coordinates = new_coordinates
+                self.origin = tuple(x + y for x, y in zip(self.origin, direction))
+
+        # Rotate the tetromino 90 degrees clockwise
+        def rotate(self):
+                # shift points to origin
+                coordinates = [(x-self.origin[0],y-self.origin[1]) for x,y in self.coordinates]
+                # Perform 90 degree rotation relative to origin
+                coordinates = [(y ,-x) for x, y in coordinates]
+                # shift points back to original position
+                coordinates = [(x+self.origin[0],y+self.origin[1]) for x,y in coordinates]
+                self.coordinates = coordinates
 
 
 class LinePiece(Tetromino):
@@ -57,6 +68,7 @@ class LinePiece(Tetromino):
 
 
 def main():
+        """
         TG = TetrisGame(14, 16)
         print TG
         TG.run_iteration()
@@ -69,6 +81,16 @@ def main():
         print TG
         TG.run_iteration()
         print TG
+        TG.active_piece.rotate()
+        TG.draw()
+        print TG
+        TG.active_piece.rotate()
+        TG.draw()
+        print TG
+        TG.active_piece.rotate()
+        TG.draw()
+        print TG
+        """
 
 if __name__ == '__main__':
         main()
