@@ -1,7 +1,6 @@
 class TetrisGame(object):
 
         active_piece = None
-        spawn_zone = None  # Will use this later
 
         # Initialize the tetris game with a WIDTH x HEIGHT tetris board
         def __init__(self, WIDTH, HEIGHT):
@@ -13,12 +12,26 @@ class TetrisGame(object):
                 self.active_piece = LinePiece()
 
         def get_direction(self):
-                return (1, 0)
+                return (0, 1)
 
         def draw(self):
                 self.board = [[0 for x in range(self.WIDTH)] for y in range(self.HEIGHT)]  # Clear board
                 for coordinate in self.active_piece.coordinates:
-                        self.board[coordinate[0]][coordinate[1]] = 1  # Draw piece onto board
+                        self.board[coordinate[0]][coordinate[1]] = 1  # Draw piece onto boar
+
+        # Determine if the current piece is within the board or not
+        def active_within_board(self):
+                if not self.active_piece:
+                        return False
+                within_board = True
+                for coordinate in self.active_piece.coordinates:
+                        within_board = within_board and coordinate[0] >= 0\
+                                        and coordinate[0] < self.HEIGHT and coordinate[1] >= 0 and\
+                                        coordinate[1] < self.WIDTH
+                        if not within_board:
+                                break
+                return within_board
+
 
         def __str__(self):
                 result = ""
@@ -36,8 +49,14 @@ class TetrisGame(object):
                 if self.active_piece is None:
                         self.new_active_piece()
                 else:
+                        # Try to move the piece and if it fails don't move
                         direction = self.get_direction()
+                        old_coordinates = self.active_piece.coordinates
+                        old_origin = self.active_piece.origin
                         self.active_piece.update(direction)
+                        if not self.active_within_board():
+                                self.active_piece.coordinates = old_coordinates
+                                self.active_piece.origin = old_origin
                 self.draw()
 
 
@@ -63,34 +82,13 @@ class Tetromino(object):
 
 class LinePiece(Tetromino):
         def __init__(self):
+                # Coordinates are (y,x) coordinate pairs
                 self.coordinates = [(0, 4), (0, 5), (0, 6), (0, 7)]
                 self.origin = (0, 6)
 
 
 def main():
-        """
-        TG = TetrisGame(14, 16)
-        print TG
-        TG.run_iteration()
-        print TG
-        TG.run_iteration()
-        print TG
-        TG.run_iteration()
-        print TG
-        TG.run_iteration()
-        print TG
-        TG.run_iteration()
-        print TG
-        TG.active_piece.rotate()
-        TG.draw()
-        print TG
-        TG.active_piece.rotate()
-        TG.draw()
-        print TG
-        TG.active_piece.rotate()
-        TG.draw()
-        print TG
-        """
+        pass
 
 if __name__ == '__main__':
         main()
