@@ -9,7 +9,7 @@ class TetrisGame(object):
                 self.board = [[0 for x in range(WIDTH)] for y in range(HEIGHT)]
 
         def new_active_piece(self):
-                self.active_piece = LinePiece()
+                self.active_piece = ZPiece()
 
         def get_direction(self):
                 return (0, 1)
@@ -61,7 +61,6 @@ class TetrisGame(object):
 
 
 class Tetromino(object):
-
         def update(self, direction):
                 new_coordinates = []
                 for coordinate in self.coordinates:
@@ -86,9 +85,63 @@ class LinePiece(Tetromino):
                 self.coordinates = [(0, 4), (0, 5), (0, 6), (0, 7)]
                 self.origin = (0, 6)
 
+class TeePiece(Tetromino):
+        def __init__(self):
+                # Coordinates are (y,x) coordinate pairs
+                self.coordinates = [(1, 4), (1, 5), (1, 6), (0, 5)]
+                self.origin = (1, 5)
+
+class SquarePiece(Tetromino):
+        def __init__(self):
+                # Coordinates are (y,x) coordinate pairs
+                self.coordinates = [(0, 4), (0, 5), (1, 4), (1, 5)]
+                self.origin = (1, 4)
+
+        # Square pieces don't rotate...
+        def rotate(self):
+                pass
+
+class JPiece(Tetromino):
+        def __init__(self):
+                # Coordinates are (y,x) coordinate pairs
+                self.coordinates = [(1, 4), (1, 5), (1, 6), (2, 6)]
+                self.origin = (1, 5)
+
+class LPiece(Tetromino):
+        def __init__(self):
+                # Coordinates are (y,x) coordinate pairs
+                self.coordinates = [(1, 4), (1, 5), (1, 6), (2, 4)]
+                self.origin = (1, 5)
+
+class SPiece(Tetromino):
+        def __init__(self):
+                # Coordinates are (y,x) coordinate pairs
+                self.coordinates = [(2, 4), (2, 5), (1, 5), (1, 6)]
+                self.origin = (1, 5)
+
+class ZPiece(Tetromino):
+        def __init__(self):
+                # Coordinates are (y,x) coordinate pairs
+                self.coordinates = [(1, 4), (1, 5), (2, 5), (2, 6)]
+                self.origin = (1, 5)
 
 def main():
-        pass
+        TG = TetrisGame(14,16)
+        TG.run_iteration()
+        print TG
+        TG.run_iteration()
+        TG.run_iteration()
+        TG.run_iteration()
+        TG.run_iteration()
+        TG.run_iteration()
+        TG.run_iteration()
+#        TG.active_piece.rotate()
+#        TG.active_piece.rotate()
+#        TG.active_piece.rotate()
+#        TG.active_piece.rotate()
+#        TG.active_piece.rotate()
+#        TG.draw()
+        print TG
 
 if __name__ == '__main__':
         main()
