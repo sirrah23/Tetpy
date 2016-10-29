@@ -6,6 +6,9 @@ class TetrisGame(object):
         game."""
         active_piece = None
         gameover = False
+        clean_board_flag = False # Flag that lets us know whether or not we
+                                 # should search the board for complete lines
+                                 # to eliminate
         gravity_count = 0 # Current iteration until the next gravity application
         gravity_max = 2  # Apply gravity every X moves
 
@@ -70,6 +73,8 @@ class TetrisGame(object):
                 """Everytime this function is called we move the tetris board
                 from state X to state X+1, accounting for any inputs from an
                 exteral source."""
+                if self.clean_board_flag:
+                        self.clean_board()
                 if self.active_piece is None:
                         self.new_active_piece()
                 else:
@@ -112,6 +117,7 @@ class TetrisGame(object):
                 """Fill given list of coordinates with a passive blocker."""
                 for coordinate in coordinates:
                         self.board[coordinate[0]][coordinate[1]] = 2
+                self.clean_board_flag = True
 
         def process_moves(self):
                 """Process all the moves in the list of moves"""
@@ -130,6 +136,31 @@ class TetrisGame(object):
                 if self.gravity_count == self.gravity_max:
                         self.active_piece.update((1,0))
                 self.gravity_count = self.gravity_count %  self.gravity_max
+
+        def clean_board(self):
+                """Search the board for any complete lines and eliminate them from the board"""
+                i = self.HEIGHT - 1  # Start from the bottom...not that it really matters 
+                lines_to_delete = []
+                while i >= 0:
+                        flagged_for_delete = True
+                        # Scan each line and see if is filled
+                        for square in self.board[i]:
+                                # Line not completely filled, stop checking
+                                if square != 2:
+                                        flagged_for_delete = False
+                                        break
+                        # Add line to list of lines to delete
+                        if flagged_for_delete:
+                                lines_to_delete.append(i)
+                        i-= 1
+                # Delete lines that are filled
+                lines_to_delete.sort(reverse=True)  # Reverse list, otherwise deleting will cause indices to shift
+                for line in lines_to_delete:
+                        del self.board[line]
+                for _ in range(len(lines_to_delete)):
+                        # Replace deleted lines
+                        self.board.insert(0,[0 for x in range(self.WIDTH)])
+                self.clean_board_flag = False
 
 
 class Tetromino(object):

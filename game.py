@@ -3,7 +3,7 @@ from tetpy import *
 
 BLOCK_WIDTH, BLOCK_HEIGHT = 40, 40
 GAME_WIDTH, GAME_HEIGHT = 14, 16
-DELAY = 50
+DELAY = 75
 TG = None
 
 pygame.init()
