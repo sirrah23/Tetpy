@@ -3,7 +3,7 @@ from tetpy import *
 
 BLOCK_WIDTH, BLOCK_HEIGHT = 40, 40
 GAME_WIDTH, GAME_HEIGHT = 14, 16
-DELAY = 25
+DELAY = 50
 TG = None
 
 pygame.init()
@@ -16,6 +16,7 @@ def game_initialize():
     TG.run_iteration()
 
 def game_render():
+    TG.run_iteration()
     for y in range(GAME_HEIGHT):
         for x in range(GAME_WIDTH):
             #TODO: Define colors like RED and BLUE
@@ -48,6 +49,5 @@ while not done:
             game_process_key(TG,"RIGHT")
         screen.fill((0,0,0)) # Black
         game_render()
-        TG.run_iteration()
         pygame.display.flip()
         pygame.time.delay(DELAY)

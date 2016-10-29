@@ -1,3 +1,5 @@
+import random
+
 class TetrisGame(object):
         """This is the game of tetris being played. Accounts for keeping track
         of the board, the current active piece, and updates to the state of the
@@ -35,7 +37,7 @@ class TetrisGame(object):
                 """This function will create a new active piece for the tetris
                 game to use."""
                 # TODO: Throw error if new piece cannot be created (game over)
-                self.active_piece = ZPiece()
+                self.active_piece = random.choice(PIECES)()
 
         def draw(self):
                 """Clears the board of the active piece, keeping all the
@@ -201,6 +203,8 @@ class ZPiece(Tetromino):
                 # Coordinates are (y,x) coordinate pairs
                 self.coordinates = [(1, 4), (1, 5), (2, 5), (2, 6)]
                 self.origin = (1, 5)
+
+PIECES = [LinePiece, TeePiece, SquarePiece, JPiece, LPiece, SPiece, ZPiece]
 
 def main():
 #        TG = TetrisGame(14,16)
