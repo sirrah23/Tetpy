@@ -1,13 +1,23 @@
 class TetrisGame(object):
+        """This is the game of tetris being played. Accounts for keeping track
+        of the board, the current active piece, and updates to the state of the
+        game."""
         active_piece = None
-        direction = (-1, 0)
         gameover = False
+        gravity_count = 0 # Current iteration until the next gravity application
+        gravity_max = 0  # Apply gravity every X moves
 
-        # Initialize the tetris game with a WIDTH x HEIGHT tetris board
+        #TODO : Clean up this code to make it more callable
+
         def __init__(self, WIDTH, HEIGHT):
+                """ Initialize the tetris game with a WIDTH x HEIGHT tetris
+                board. The board will start clean, filled completely with
+                zeroes.
+                """
                 self.WIDTH = WIDTH
                 self.HEIGHT = HEIGHT
                 self.board = [[0 for x in range(WIDTH)] for y in range(HEIGHT)]
+                self.moves = []  # List of moves to process
 
         def __str__(self):
                 result = ""
@@ -22,10 +32,15 @@ class TetrisGame(object):
                 return self.__str__()
 
         def new_active_piece(self):
+                """This function will create a new active piece for the tetris
+                game to use."""
                 # TODO: Throw error if new piece cannot be created (game over)
                 self.active_piece = ZPiece()
 
         def draw(self):
+                """Clears the board of the active piece, keeping all the
+                blocked squares as they are, and then redraws the active piece,
+                wherever it may be."""
                 # TODO: Optimize this at some point, maybe when we start deleting rows
                 for y in range(self.HEIGHT):
                         for x in range(self.WIDTH):
@@ -37,6 +52,9 @@ class TetrisGame(object):
 
         # Determine if the current piece is within the board or not
         def active_within_sides(self):
+                """Determine if the position of the currently active piece
+                extend past the sides of the board. This will be called after
+                we attempt to move the active piece somewhere new."""
                 if not self.active_piece:
                         return False
                 within_board = True
@@ -47,46 +65,64 @@ class TetrisGame(object):
                 return within_board
 
         def run_iteration(self):
+                """Everytime this function is called we move the tetris board
+                from state X to state X+1, accounting for any inputs from an
+                exteral source."""
                 if self.active_piece is None:
                         self.new_active_piece()
                 else:
-                        #TODO: Add user rotation here if requested...
-                        #TODO: Get user input for left-right movement
-                        if self.direction[1] != 0:
-                                old_coordinates = self.active_piece.coordinates
-                                old_origin = self.active_piece.origin
-                                self.active_piece.update((0, direction[1]))
-                                if not self.active_within_sides():
-                                        self.active_piece.coordinates = old_coordinates
-                                        self.active_piece.origin = old_origin
+                        #TODO: Add some kind of gravity iteration-count.
+                        old_coordinates = self.active_piece.coordinates
+                        old_origin = self.active_piece.origin
+                        self.process_moves() # Move the piece to the left, right, and rotate
+                        if not self.active_within_sides():
+                                self.active_piece.coordinates = old_coordinates
+                                self.active_piece.origin = old_origin
                         # Default gravity movement, for active pieces, always happens
                         old_coordinates = self.active_piece.coordinates
                         old_origin = self.active_piece.origin
-                        self.active_piece.update((1, 0))
-                        #TODO: Implement these new methods
+                        self.apply_gravity() # Move the piece down
                         if not self.above_bottom(self.active_piece.coordinates) or self.occupied(self.active_piece.coordinates):
                                 self.pacify(old_coordinates)
                                 self.new_active_piece()
                 self.draw()
 
         def occupied(self, coordinates):
-                # If any coordinate in a list of coordinates is occupied, return True, else return False
+                """If any coordinate in a list of coordinates is occupied,
+                return True, else return False."""
                 for coordinate in coordinates:
                         if self.board[coordinate[0]][coordinate[1]] == 2:
                                 return True
                 return False
 
         def above_bottom(self, coordinates):
-                # If any of the coordinates from a list extend past the height of the board, return False, else return True
+                """ If any of the coordinates from a list extend past the
+                height of the board, return False, else return True."""
                 for coordinate in coordinates:
                         if coordinate[0] >= self.HEIGHT:
                                 return False
                 return True
 
         def pacify(self, coordinates):
-                # Fill given list of coordinates with a passive blocker
+                """Fill given list of coordinates with a passive blocker."""
                 for coordinate in coordinates:
                         self.board[coordinate[0]][coordinate[1]] = 2
+
+        def process_moves(self):
+                """Process all the moves in the list of moves"""
+                # TODO : Might want to set a limit on how many moves we process at any transition.
+                MOVES = {"LEFT": self.active_piece.move_left,
+                         "RIGHT": self.active_piece.move_right,
+                         "ROTATE": self.active_piece.rotate
+                }
+                for move in self.moves:
+                        MOVES[move]()
+                self.moves = []  # Get rid of moves we just processed
+
+        def apply_gravity(self):
+                """Apply gravity to the board, move the active piece down."""
+                # TODO : Implement gravity counter
+                self.active_piece.update((1,0))
 
 
 class Tetromino(object):
@@ -106,6 +142,12 @@ class Tetromino(object):
                 # shift points back to original position
                 coordinates = [(x+self.origin[0],y+self.origin[1]) for x,y in coordinates]
                 self.coordinates = coordinates
+
+        def move_left(self):
+                self.update((0,-1))
+
+        def move_right(self):
+                self.update((0,1))
 
 class LinePiece(Tetromino):
         def __init__(self):
@@ -154,17 +196,13 @@ class ZPiece(Tetromino):
                 self.origin = (1, 5)
 
 def main():
-#        TG = TetrisGame(14,16)
-#        TG.run_iteration()
-#        print TG
-#        TG.run_iteration()
-#        TG.active_piece.rotate()
-#        TG.active_piece.rotate()
-#        TG.active_piece.rotate()
-#        TG.active_piece.rotate()
-#        TG.draw()
-#        print TG
-        pass
+        TG = TetrisGame(14,16)
+        TG.run_iteration()
+        TG.moves += ["ROTATE","ROTATE", "ROTATE", "RIGHT"]
+        TG.run_iteration()
+        TG.moves += ["ROTATE","LEFT", "LEFT", "LEFT"]
+        TG.run_iteration()
+        print TG
 
 if __name__ == '__main__':
         main()
