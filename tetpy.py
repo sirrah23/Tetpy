@@ -5,7 +5,7 @@ class TetrisGame(object):
         active_piece = None
         gameover = False
         gravity_count = 0 # Current iteration until the next gravity application
-        gravity_max = 0  # Apply gravity every X moves
+        gravity_max = 2  # Apply gravity every X moves
 
         #TODO : Clean up this code to make it more callable
 
@@ -75,9 +75,12 @@ class TetrisGame(object):
                         old_coordinates = self.active_piece.coordinates
                         old_origin = self.active_piece.origin
                         self.process_moves() # Move the piece to the left, right, and rotate
-                        if not self.active_within_sides():
+                        if not self.active_within_sides() or self.occupied(self.active_piece.coordinates):
                                 self.active_piece.coordinates = old_coordinates
                                 self.active_piece.origin = old_origin
+                        if not self.above_bottom(self.active_piece.coordinates) or self.occupied(self.active_piece.coordinates):
+                                self.pacify(old_coordinates)
+                                self.new_active_piece()
                         # Default gravity movement, for active pieces, always happens
                         old_coordinates = self.active_piece.coordinates
                         old_origin = self.active_piece.origin
@@ -116,17 +119,21 @@ class TetrisGame(object):
                          "ROTATE": self.active_piece.rotate
                 }
                 for move in self.moves:
-                        MOVES[move]()
+                        MOVES.get(move, lambda : None)()
                 self.moves = []  # Get rid of moves we just processed
 
         def apply_gravity(self):
                 """Apply gravity to the board, move the active piece down."""
-                # TODO : Implement gravity counter
-                self.active_piece.update((1,0))
+                self.gravity_count += 1
+                if self.gravity_count == self.gravity_max:
+                        self.active_piece.update((1,0))
+                self.gravity_count = self.gravity_count %  self.gravity_max
 
 
 class Tetromino(object):
         def update(self, direction):
+                # TODO : Consider making it so that self.origin could contain floats. This would
+                # require type casting the coordinates to ints upon addition.
                 new_coordinates = []
                 for coordinate in self.coordinates:
                         new_coordinates.append(tuple(x + y for x, y in zip(coordinate, direction)))
@@ -144,10 +151,10 @@ class Tetromino(object):
                 self.coordinates = coordinates
 
         def move_left(self):
-                self.update((0,-1))
+                self.update((0,1))
 
         def move_right(self):
-                self.update((0,1))
+                self.update((0,-1))
 
 class LinePiece(Tetromino):
         def __init__(self):
@@ -196,13 +203,14 @@ class ZPiece(Tetromino):
                 self.origin = (1, 5)
 
 def main():
-        TG = TetrisGame(14,16)
-        TG.run_iteration()
-        TG.moves += ["ROTATE","ROTATE", "ROTATE", "RIGHT"]
-        TG.run_iteration()
-        TG.moves += ["ROTATE","LEFT", "LEFT", "LEFT"]
-        TG.run_iteration()
-        print TG
+#        TG = TetrisGame(14,16)
+#        TG.run_iteration()
+#        TG.moves += ["ROTATE","ROTATE", "ROTATE", "RIGHT"]
+#        TG.run_iteration()
+#        TG.moves += ["ROTATE","LEFT", "LEFT", "LEFT"]
+#        TG.run_iteration()
+#        print TG
+        pass
 
 if __name__ == '__main__':
         main()
