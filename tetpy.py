@@ -37,8 +37,10 @@ class TetrisGame(object):
         def new_active_piece(self):
                 """This function will create a new active piece for the tetris
                 game to use."""
-                # TODO: Throw error if new piece cannot be created (game over)
                 self.active_piece = random.choice(PIECES)()
+                # TODO: Add a shift-up or two to conform to tetris rules
+                if self.game_is_over():
+                        self.gameover = True
 
         def draw(self):
                 """Clears the board of the active piece, keeping all the
@@ -71,6 +73,8 @@ class TetrisGame(object):
                 """Everytime this function is called we move the tetris board
                 from state X to state X+1, accounting for any inputs from an
                 exteral source."""
+                if self.gameover:
+                        return
                 if self.clean_board_flag:
                         self.clean_board()
                 if self.active_piece is None:
@@ -159,6 +163,12 @@ class TetrisGame(object):
                         # Replace deleted lines
                         self.board.insert(0,[0 for x in range(self.WIDTH)])
                 self.clean_board_flag = False
+
+        def game_is_over(self):
+                """Called when spawning a new piece. If the spawn point is occupied then the game is over."""
+                if self.occupied(self.active_piece.coordinates):
+                        return True
+                return False
 
 
 class Tetromino(object):

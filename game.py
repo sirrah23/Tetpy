@@ -32,6 +32,9 @@ def game_process_key(TG, key):
     elif key == "RIGHT":
         TG.moves += ["RIGHT"]
 
+def game_over(TG):
+    return TG.gameover
+
 game_initialize()
 while not done:
         for event in pygame.event.get():
@@ -48,4 +51,8 @@ while not done:
                         game_process_key(TG,"RIGHT")
         screen.fill((0,0,0)) # Black
         game_render()
+        if game_over(TG):
+            done = True
         pygame.display.flip()
+
+# TODO: Display a GAME OVER screen?
