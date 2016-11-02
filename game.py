@@ -2,8 +2,7 @@ import pygame
 from tetpy import *
 
 BLOCK_WIDTH, BLOCK_HEIGHT = 40, 40
-GAME_WIDTH, GAME_HEIGHT = 14, 16
-DELAY = 75
+GAME_WIDTH, GAME_HEIGHT = 14, 20
 TG = None
 
 pygame.init()
@@ -38,16 +37,15 @@ while not done:
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                         done = True
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            game_process_key(TG,"UP")
-        if keys[pygame.K_DOWN]:
-            game_process_key(TG,"DOWN")
-        if keys[pygame.K_RIGHT]:
-            game_process_key(TG,"LEFT")
-        if keys[pygame.K_LEFT]:
-            game_process_key(TG,"RIGHT")
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        game_process_key(TG,"UP")
+                    if event.key == pygame.K_DOWN:
+                        game_process_key(TG,"DOWN")
+                    if event.key == pygame.K_RIGHT:
+                        game_process_key(TG,"LEFT")
+                    if event.key == pygame.K_LEFT:
+                        game_process_key(TG,"RIGHT")
         screen.fill((0,0,0)) # Black
         game_render()
         pygame.display.flip()
-        pygame.time.delay(DELAY)

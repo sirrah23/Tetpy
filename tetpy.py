@@ -10,9 +10,7 @@ class TetrisGame(object):
                                  # should search the board for complete lines
                                  # to eliminate
         gravity_count = 0 # Current iteration until the next gravity application
-        gravity_max = 2  # Apply gravity every X moves
-
-        #TODO : Clean up this code to make it more callable
+        gravity_max = 75  # Apply gravity every X moves
 
         def __init__(self, WIDTH, HEIGHT):
                 """ Initialize the tetris game with a WIDTH x HEIGHT tetris
@@ -78,7 +76,7 @@ class TetrisGame(object):
                 if self.active_piece is None:
                         self.new_active_piece()
                 else:
-                        #TODO: Add some kind of gravity iteration-count.
+                        # TODO: Clean up code so it doesn't have to do this old_coordinate stuff
                         old_coordinates = self.active_piece.coordinates
                         old_origin = self.active_piece.origin
                         self.process_moves() # Move the piece to the left, right, and rotate
