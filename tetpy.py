@@ -38,7 +38,7 @@ class TetrisGame(object):
                 """This function will create a new active piece for the tetris
                 game to use."""
                 self.active_piece = random.choice(PIECES)()
-                # TODO: Add a shift-up or two to conform to tetris rules
+                # TODO: Add a shift-up or two to conform to tetris rules. Not critical.
                 if self.game_is_over():
                         self.gameover = True
 
@@ -80,7 +80,14 @@ class TetrisGame(object):
                 if self.active_piece is None:
                         self.new_active_piece()
                 else:
-                        # TODO: Clean up code so it doesn't have to do this old_coordinate stuff
+                        """
+                        TODO: Clean up code so it doesn't have to do this old_coordinate stuff
+                        The issue here is that I separated the pieces completely from the board. This separation probably wasn't
+                        a good idea. Pieces have no need to exist without a board. Because of this separation we need to do this
+                        redundant validation by keeping track of old coordinates. I need to change this so that when a piece
+                        moves, it takes into account at that point whether or not it made a valid move. This change will also
+                        help when we implement the space-zoom feature.
+                        """
                         old_coordinates = self.active_piece.coordinates
                         old_origin = self.active_piece.origin
                         self.process_moves() # Move the piece to the left, right, and rotate
@@ -246,13 +253,15 @@ class ZPiece(Tetromino):
 PIECES = [LinePiece, TeePiece, SquarePiece, JPiece, LPiece, SPiece, ZPiece]
 
 def main():
-#        TG = TetrisGame(14,16)
-#        TG.run_iteration()
-#        TG.moves += ["ROTATE","ROTATE", "ROTATE", "RIGHT"]
-#        TG.run_iteration()
-#        TG.moves += ["ROTATE","LEFT", "LEFT", "LEFT"]
-#        TG.run_iteration()
-#        print TG
+        """
+        TG = TetrisGame(14,16)
+        TG.run_iteration()
+        TG.moves += ["ROTATE","ROTATE", "ROTATE", "RIGHT"]
+        TG.run_iteration()
+        TG.moves += ["ROTATE","LEFT", "LEFT", "LEFT"]
+        TG.run_iteration()
+        print TG
+        """
         pass
 
 if __name__ == '__main__':
