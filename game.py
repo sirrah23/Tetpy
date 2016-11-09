@@ -33,6 +33,8 @@ class GameLogic(object):
             self.TG.moves += ["LEFT"]
         elif key == "RIGHT":
             self.TG.moves += ["RIGHT"]
+        elif key == "SPACE":
+            self.TG.moves += ["SPACE"]
 
     def game_over(self):
         """Set flag to mark game as over."""
@@ -70,6 +72,8 @@ def main():
                             game_logic.game_process_key("LEFT")
                         if event.key == pygame.K_LEFT:
                             game_logic.game_process_key("RIGHT")
+                        if event.key == pygame.K_SPACE:
+                            game_logic.game_process_key("SPACE")
             screen.fill(BLACK) # Black
             game_logic.game_render()
             if game_logic.game_over():

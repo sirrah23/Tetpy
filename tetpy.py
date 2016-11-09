@@ -81,12 +81,9 @@ class TetrisGame(object):
                         self.new_active_piece()
                 else:
                         """
-                        TODO: Clean up code so it doesn't have to do this old_coordinate stuff
-                        The issue here is that I separated the pieces completely from the board. This separation probably wasn't
-                        a good idea. Pieces have no need to exist without a board. Because of this separation we need to do this
-                        redundant validation by keeping track of old coordinates. I need to change this so that when a piece
-                        moves, it takes into account at that point whether or not it made a valid move. This change will also
-                        help when we implement the space-zoom feature.
+                        TODO: Clean up code so it doesn't have to do this old_coordinate stuff.
+                        There is probably a more elegant way to do this, but I can't think of one
+                        at the moment.
                         """
                         old_coordinates = self.active_piece.coordinates
                         old_origin = self.active_piece.origin
@@ -131,12 +128,17 @@ class TetrisGame(object):
         def process_moves(self):
                 """Process all the moves in the list of moves"""
                 # TODO : Might want to set a limit on how many moves we process at any transition.
-                MOVES = {"LEFT": self.active_piece.move_left,
-                         "RIGHT": self.active_piece.move_right,
-                         "ROTATE": self.active_piece.rotate
+                MOVES = {"LEFT": (self.active_piece.move_left, None),
+                         "RIGHT": (self.active_piece.move_right, None),
+                         "ROTATE": (self.active_piece.rotate, None),
+                         "SPACE" : (self.active_piece.zoom, self)
                 }
                 for move in self.moves:
-                        MOVES.get(move, lambda : None)()
+                        move_to_perform, argument = MOVES.get(move, lambda : None)
+                        if not argument:
+                                move_to_perform()
+                        else:
+                                move_to_perform(argument)
                 self.moves = []  # Get rid of moves we just processed
 
         def apply_gravity(self):
@@ -203,6 +205,17 @@ class Tetromino(object):
 
         def move_right(self):
                 self.update((0,-1))
+
+        def zoom(self, TG):
+                """Given the context of a tetris game, zoom the current tetris piece to the bottom of the board.
+                If any blocked squares are hit along the way then stop there."""
+                while TG.above_bottom(self.coordinates) and not TG.occupied(self.coordinates):
+                        print self.coordinates
+                        old_coordinates = self.coordinates
+                        self.update((1,0))
+                self.coordinates = old_coordinates
+
+
 
 class LinePiece(Tetromino):
         def __init__(self):
