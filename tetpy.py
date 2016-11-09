@@ -210,7 +210,6 @@ class Tetromino(object):
                 """Given the context of a tetris game, zoom the current tetris piece to the bottom of the board.
                 If any blocked squares are hit along the way then stop there."""
                 while TG.above_bottom(self.coordinates) and not TG.occupied(self.coordinates):
-                        print self.coordinates
                         old_coordinates = self.coordinates
                         self.update((1,0))
                 self.coordinates = old_coordinates
